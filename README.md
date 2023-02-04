@@ -45,6 +45,22 @@ dependencies {
 </div>
 </details>
 
+<details>
+<summary> ✏ AccessToken & RefreshToken </summary>
+<div markdown="1">
+ 
+ #### 1️⃣ AccessToken - 인증 처리 역할
+ - 처음 로그인 요청시 서버에서 실제 유저의 정보가 담긴 AccessToken을 발행.
+ - Client는 이 AccessToke을 저장한 후, 요청마다 AccessToken을 보내서 해당 AccessToken을 서버에서 검증 후 유효하면 요청에 맞는 응답을 진행.
+ 
+ #### 2️⃣ RefreshToken - 재발급 역할
+ - 처음 로그인 요청시 서버에서 AccessToken 재발급 용도인 RefreshToken을 발행.
+ - 이때, 클라이언트는 RefreahToekn을 저장하지 않고 보통 서버 DB에 저장.
+ - RefreshToken이 유효하면, AccessToken의 재발급을 진행.
+ 
+</div>
+</details>
+
 ### REST API를 사용한 카카오 로그인 과정
 #### 1️⃣ 인가 코드 받기
 ![image](https://user-images.githubusercontent.com/87464750/216277235-ea75aed7-770b-4da9-be25-92828d8eadd9.png)
