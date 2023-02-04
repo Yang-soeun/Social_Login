@@ -1,7 +1,7 @@
 # Social_Login
 ### 🟡 카카오 로그인
 <details>
-<summary> dependencies </summary>
+<summary> ✏ dependencies </summary>
 <div markdown="1">
 
 #### gson - JAVA 객체를 JSON 데이터로 손쉽게 변환할 수 있고, 그 반대도 가능하게 해줌
@@ -15,7 +15,7 @@ dependencies {
 </details>
 
 <details>
-<summary> 애플리케이션 설정 </summary>
+<summary> ✏ 애플리케이션 설정 </summary>
 <div markdown="1">
 
 #### 1️⃣ 애플리케이션 추가
@@ -26,10 +26,21 @@ dependencies {
 ##### 내 애플리케이션 -> 앱 설정 -> 플랫폼
 ![image](https://user-images.githubusercontent.com/87464750/216276640-0a57db3b-d5f9-419e-ae83-fff89947c151.png)
 
+- 배포하면 배포한 주소도 추가해야함.
+
 #### 3️⃣ Redirect URL 설정
 ##### 내 애플리케이션 -> 제품 설정 -> 카카오 로그인
 ##### 활성화 설정 ON
 ##### Redirect URI입력
+
+</div>
+</details>
+
+<details>
+<summary> ✏ URL 구조 </summary>
+<div markdown="1">
+
+![image](https://user-images.githubusercontent.com/87464750/216758177-ab16ba64-5934-4072-851c-f50e5a56a6bd.png)
 
 </div>
 </details>
