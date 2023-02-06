@@ -22,6 +22,11 @@ dependencies {
 }
 ```
 
+#### WebClient
+```
+implementation 'org.springframework.boot:spring-boot-starter-webflux'
+```
+
 </div>
 </details>
 
