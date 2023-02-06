@@ -77,6 +77,21 @@ implementation 'org.springframework.boot:spring-boot-starter-webflux'
 </div>
 </details>
 
+<details>
+<summary> ✏ WebClient </summary>
+<div markdown="1">
+
+#### WebClient란?
+- HTTP 요청을 수행하기 위한 Non-Blocking 및 반응형 웹 클라이언트
+##### ❕ RestTemplate와 차이점
+- RestTemplate = Blocking 방식
+- WebClient - Non-Blocking 방식
+
+사용방법 - https://howtodoinjava.com/spring-webflux/webclient-get-post-example/
+
+</div>
+</details>
+
 ### REST API를 사용한 카카오 로그인 과정
 #### 1️⃣ 인가 코드 받기
 ![image](https://user-images.githubusercontent.com/87464750/216277235-ea75aed7-770b-4da9-be25-92828d8eadd9.png)
