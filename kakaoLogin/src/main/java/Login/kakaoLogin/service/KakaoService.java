@@ -25,8 +25,9 @@ public class KakaoService {
     //엑세스 토큰을 받는 함수
     public KakaoToken getAccessToken(String code){
         String reqURL = "https://kauth.kakao.com/oauth/token";
-        String client_id = "8b8cede7921920490681a4cfd0c75f2a";
+        String client_id = "";
         String redirect_uri = "http://localhost:8080/login";
+        String client_secret = "";
 
         //Request Parameter
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -34,6 +35,7 @@ public class KakaoService {
         params.add("client_id", client_id);
         params.add("redirect_uri", redirect_uri);
         params.add("code", code);
+        params.add("client_secret", client_secret);
 
         //요청
         WebClient wc = WebClient.create(reqURL);//base url을 지정해서 WebClient 생성
@@ -41,7 +43,7 @@ public class KakaoService {
         String response = wc.post()
                 .uri(reqURL)
                 .body(BodyInserters.fromFormData(params))
-                .header("Content-type", "application/x-www-form-urlencoded;charset=utf-8")
+                .header("Content-type","application/x-www-form-urlencoded;charset=utf-8" )
                 .retrieve()//HTTP 요청을 직접 수행하고 응답 본문을 검색
                 .bodyToMono(String.class)//body 타입
                 .block();
@@ -86,7 +88,7 @@ public class KakaoService {
     //저장
     @Transactional
     public User saveUser(KakaoProfile profile){
-        User user = userRepository.findByUserid(profile.getId());
+        User user = userRepository.findByUseremail(profile.getKakao_account().getEmail());
 
         //처음 사용자 강제 회원가입
         /**
@@ -95,7 +97,6 @@ public class KakaoService {
          */
         if(user == null){
             user = User.builder()
-                    .userid(profile.getId())
                     .password(null)
                     .nickname(profile.getKakao_account().getProfile().getNickname())
                     .profileImg(profile.getKakao_account().getProfile().getProfile_image_url())

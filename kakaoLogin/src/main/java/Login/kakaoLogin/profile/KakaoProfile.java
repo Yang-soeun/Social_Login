@@ -9,7 +9,7 @@ import lombok.Data;
 public class KakaoProfile {
 
     //Response
-    public String id;//회원번호(User에 userid에 저장하기 위해서 Long -> String으로)
+    public String id;
     public String connected_at;//서비스에 연결 완료된 시각(UTC)
     public KakaoAccount kakao_account;//카카오계정 정보
     public Properties properties;
@@ -21,6 +21,7 @@ public class KakaoProfile {
         //사용자 동의 시 프로필 사진 제공 가능
         public Boolean profile_image_needs_agreement;//프로필
         public Profile profile;// JSON 프로필 정보
+        public Boolean has_email;//이거 안하면 오류생김
         public Boolean email_needs_agreement;
         public Boolean is_email_valid;
         public Boolean is_email_verified;
