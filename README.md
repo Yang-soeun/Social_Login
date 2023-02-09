@@ -16,6 +16,7 @@ dependencies {
 
 ```
 dependencies {
+	implementation group: 'com.auth0', name: 'java-jwt', version: '3.10.2'
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
