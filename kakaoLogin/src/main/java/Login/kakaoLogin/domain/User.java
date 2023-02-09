@@ -15,10 +15,10 @@ import java.time.LocalDateTime;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long user_id;
     private String password;
 
-    private String userId;//카카오 사용자 = 고유 id
+    //private Long user_id;//카카오 사용자 = 고유 id
     private String provider;
     private String nickname;
     private String email;
@@ -26,8 +26,7 @@ public class User {
     private LocalDateTime createTime;
 
     @Builder
-    public User(String userId, String password, String nickname, String profileImg, String email, LocalDateTime createTime,String provider){
-        this.userId = userId;
+    public User(String password, String nickname, String profileImg, String email, LocalDateTime createTime,String provider){
         this.password = password;
         this.nickname = nickname;
         this.profileImg = profileImg;
