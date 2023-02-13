@@ -24,8 +24,8 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository{
 
     @Override
     public Optional<RefreshToken> find(Long userId) {
-        RefreshToken refreshToken = query.select(QRefreshToken.refreshToken)
-                .from(QRefreshToken.refreshToken)
+        RefreshToken refreshToken = query.select(QRefreshToken.refreshToken1)
+                .from(QRefreshToken.refreshToken1)
                 .where(sameId(userId))
                 .fetchFirst();
 
@@ -38,7 +38,7 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository{
 
     @Override
     public void delete(Long userId) {
-        query.delete(QRefreshToken.refreshToken)
+        query.delete(QRefreshToken.refreshToken1)
                 .where(sameId(userId))
                 .execute();
     }

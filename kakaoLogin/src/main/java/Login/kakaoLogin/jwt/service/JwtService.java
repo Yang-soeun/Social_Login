@@ -7,11 +7,8 @@ import Login.kakaoLogin.jwt.provider.JwtProvider;
 import Login.kakaoLogin.service.RefreshTokenService;
 import Login.kakaoLogin.service.UserService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
@@ -25,9 +22,10 @@ public class JwtService {
     public JwtToken createAndSaveToken(Long user_id, String nickname){
         JwtToken createToken = jwtProvider.createJwtToken(user_id, nickname); //토큰 생성
 
-        //리프레시 토큰이 있는 사용자인지 판별
+        //리프레시 토큰 가져오기
         Optional<RefreshToken> findRefreshToken = refreshTokenService.findRefreshToken(user_id);
 
+        //리프레시 토큰이 있는지 없는지 판단
         //리프레시 토큰이 없는 경우: 회원가입하고 처음 로그인 하는 사용자, 로그아웃 한 사용자
         if(findRefreshToken.isEmpty()){
             RefreshToken refreshToken = new RefreshToken(createToken.getRefreshToken());
@@ -39,7 +37,7 @@ public class JwtService {
         return createToken;
     }
 
-    //리프레시 토큰 정보를 가지고 멕세스 토큰, 리프레시 토큰 재발급
+    //리프레시 토큰 정보를 가지고 엑세스 토큰, 리프레시 토큰 재발급
     public JwtToken recreateToken(String refreshToken){
         //리프레시 토큰에서 user_id 추출
         Long findId = jwtProvider.getUserId(refreshToken);

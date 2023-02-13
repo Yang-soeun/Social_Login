@@ -6,11 +6,11 @@ import java.util.Optional;
 
 public interface RefreshTokenRepository {
     //리프레시 토큰 조회
-    public Optional<RefreshToken> find(Long userId);
+    Optional<RefreshToken> find(Long userId);
 
     //리프레시 토큰 저장
-    public void save(RefreshToken refreshToken);
+    void save(RefreshToken refreshToken);
 
     //리프레시 토큰 삭제
-    public void delete(Long userId);
+    void delete(Long userId);
 }

@@ -5,6 +5,7 @@ import Login.kakaoLogin.domain.User;
 import Login.kakaoLogin.repository.UserRepository;
 import Login.kakaoLogin.repository.refresh.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.standard.expression.NotEqualsExpression;
@@ -14,6 +15,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
@@ -50,11 +52,9 @@ public class RefreshTokenService {
 
         //토큰값이 잘못된 경우
         if(!findRefreshToken.equals(refreshToken)){
-            /**
-             * 이 부분 찾아보기 !!!!!!
-             * throw new NotEqRefreshToken("리프레시 토큰이 잘못된 값입니다.");
-             */
+            log.error("리프레시 토큰이 잘못된 값입니다.");
         }
+
         return refreshToken;
     }
 }

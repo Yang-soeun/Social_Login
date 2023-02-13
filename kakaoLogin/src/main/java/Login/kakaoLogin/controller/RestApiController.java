@@ -5,15 +5,13 @@ import Login.kakaoLogin.jwt.JsonResponse;
 import Login.kakaoLogin.jwt.JwtToken;
 import Login.kakaoLogin.jwt.service.JwtService;
 import Login.kakaoLogin.profile.KakaoProfile;
-import Login.kakaoLogin.repository.UserRepository;
 import Login.kakaoLogin.service.KakaoService;
 import Login.kakaoLogin.token.KakaoToken;
 import lombok.RequiredArgsConstructor;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.Map;
 
 @RestController
@@ -23,6 +21,9 @@ public class RestApiController {
     private final JwtService jwtService;
     private final JsonResponse jsonResponse;
 
+    /**
+     * 카카오 로그인 test
+     */
     @GetMapping("/login")
     public Map<String, String> kakaoLogin(@RequestParam("code") String code){
         //엑세스 토큰 받기
@@ -39,4 +40,5 @@ public class RestApiController {
 
         return jsonResponse.successLoginResponse(result);
     }
+
 }

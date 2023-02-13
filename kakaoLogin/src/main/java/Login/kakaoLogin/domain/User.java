@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Entity @Data
-@NoArgsConstructor
+@NoArgsConstructor//기본 생성자를 생성 해줌: 초기값 세팅이 필요한 final 변수가 있을 경우 컴파일 에러가 발생함 주의!
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

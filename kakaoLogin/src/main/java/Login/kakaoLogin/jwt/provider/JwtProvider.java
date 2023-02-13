@@ -7,16 +7,12 @@ import com.auth0.jwt.algorithms.Algorithm;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.security.SignatureException;
-import io.netty.util.internal.StringUtil;
-import lombok.Data;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import reactor.util.StringUtils;
-
 import javax.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 
@@ -26,7 +22,7 @@ import java.util.Date;
 @Configuration
 @Slf4j
 @RequiredArgsConstructor
-public class JwtProvider {
+public class JwtProvider implements AuthentocationTokenProvider{
 
     //토큰 생성
     public JwtToken createJwtToken(Long user_id, String nickname){
@@ -59,12 +55,13 @@ public class JwtProvider {
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
     }
 
-    //JWT 엑세스 토큰이 헤더에 있는지 검증
+    //JWT 엑세스 토큰이 헤더에 있는지 검증(인터셉터에서 사용하고 있음)
     public String validAccessTokenHeader(HttpServletRequest request){
         String token = request.getHeader(JwtProperties.HEADER_STRING);
 
         if(!StringUtils.hasText(token))
             return null;
+
         return token;
     }
 
@@ -89,21 +86,23 @@ public class JwtProvider {
     }
 
     //유효성 검사
-//    public void validateToken(String token){
-//        try{
-//            Jwts.parserBuilder().setSigningKey(JwtProperties.SECRET.getBytes())
-//                    .build().parseClaimsJws(token).getBody();
-//        }catch (SignatureException e ){
-//            throw new JwtValidException(e.getMessage());
-//        }catch (ExpiredJwtException e) {
-//            throw new JwtExpireException(e.getMessage());
-//        } catch (MalformedJwtException e) {
-//            throw new JwtValidException(e.getMessage());
-//        }catch (IllegalArgumentException e) {
-//            throw new JwtValidException(e.getMessage());
-//        }catch (Exception e ){
-//            throw new JwtValidException(e.getMessage());
-//        }
-//    }
-
+    @Override
+    public boolean validateToken(String token){
+        if(StringUtils.isEmpty(token)){
+            try{
+                Jwts.parserBuilder().setSigningKey(JwtProperties.SECRET.getBytes())
+                        .build().parseClaimsJws(token).getBody();
+                return true;
+            }catch (ExpiredJwtException e) {
+                log.error("Expired JWT token", e);
+            } catch (MalformedJwtException e) {
+                log.error("Invalid JWT token", e);
+            }catch (IllegalArgumentException e) {
+                log.error("JWT claims string is empty", e);
+            }catch (UnsupportedJwtException e ){
+                log.error("Unsupported JWT token", e);
+            }
+        }
+        return false;
+    }
 }
