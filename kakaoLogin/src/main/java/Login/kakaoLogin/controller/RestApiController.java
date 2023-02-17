@@ -5,22 +5,47 @@ import Login.kakaoLogin.jwt.JsonResponse;
 import Login.kakaoLogin.jwt.JwtToken;
 import Login.kakaoLogin.jwt.service.JwtService;
 import Login.kakaoLogin.profile.KakaoProfile;
+import Login.kakaoLogin.repository.UserRepository;
 import Login.kakaoLogin.service.KakaoService;
 import Login.kakaoLogin.token.KakaoToken;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 import java.util.Map;
 
-@RestController
 @RequiredArgsConstructor
+@Controller
 public class RestApiController {
     private final KakaoService kakaoService;
     private final JwtService jwtService;
     private final JsonResponse jsonResponse;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+
+    /**
+     * 회원가입
+     */
+
+    @GetMapping("/joinForm")
+    public String joinForm(){
+        return "joinForm";
+    }
+
+    @PostMapping("/join")
+    @ResponseBody
+    public String join(@ModelAttribute User user){
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setRoles("USER");
+        user.setCreateTime(LocalDateTime.now());
+        userRepository.save(user);
+
+        return "회원가입 완료";
+    }
     /**
      * 카카오 로그인 test
      */
@@ -40,5 +65,4 @@ public class RestApiController {
 
         return jsonResponse.successLoginResponse(result);
     }
-
 }

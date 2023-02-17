@@ -14,4 +14,6 @@ public interface UserRepository{
     User findUserById(Long userId);
 
     void save(User user);
+
+    User findByNickname(String username);
 }
