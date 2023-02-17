@@ -25,13 +25,14 @@ import java.util.Date;
 public class JwtProvider implements AuthentocationTokenProvider{
 
     //토큰 생성
-    public JwtToken createJwtToken(Long user_id, String nickname){
+    public JwtToken createJwtToken(Long user_id, String nickname, String role){
         //엑세스 토큰 생성
         String accessToken = JWT.create()
                 .withSubject(String.valueOf(user_id))
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
                 .withClaim("user_id", user_id)
                 .withClaim("nickname", nickname)
+                .withClaim("role", role)
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
         //리프레시 토큰 생성
@@ -40,18 +41,20 @@ public class JwtProvider implements AuthentocationTokenProvider{
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
                 .withClaim("user_id", user_id)
                 .withClaim("nickname", nickname)
+                .withClaim("role", role)
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
         return new JwtToken(accessToken, refreshToken);
     }
 
     //엑세스 토큰만 생성
-    public String createAccessToken(Long user_id, String nickname){
+    public String createAccessToken(Long user_id, String nickname, String role){
         return JWT.create()
                 .withSubject(String.valueOf(user_id))
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
                 .withClaim("user_id", user_id)
                 .withClaim("nickName", nickname)
+                .withClaim("role", role)
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
     }
 
@@ -73,6 +76,11 @@ public class JwtProvider implements AuthentocationTokenProvider{
     public Long getUserId(String token){
         return Long.valueOf(Jwts.parserBuilder().setSigningKey(JwtProperties.SECRET.getBytes()).build()
                 .parseClaimsJws(token).getBody().get("user_id").toString());
+    }
+
+    public String getRole(String token){
+        return Jwts.parserBuilder().setSigningKey(JwtProperties.SECRET.getBytes()).build()
+                .parseClaimsJws(token).getBody().get("role").toString();
     }
 
     //토큰 만료시간 구하기

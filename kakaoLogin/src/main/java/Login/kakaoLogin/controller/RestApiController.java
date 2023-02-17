@@ -36,7 +36,7 @@ public class RestApiController {
         User saveUser = kakaoService.saveUser(kakaoProfile);
 
         //jwt 토큰 저장
-        JwtToken result = jwtService.createAndSaveToken(saveUser.getUser_id(), saveUser.getNickname());
+        JwtToken result = jwtService.createAndSaveToken(saveUser.getUser_id(), saveUser.getNickname(), saveUser.getRoles());
 
         return jsonResponse.successLoginResponse(result);
     }

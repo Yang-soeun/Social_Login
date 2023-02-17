@@ -19,8 +19,8 @@ public class JwtService {
     private final UserService userService;
 
     //토큰 생성 및 저장
-    public JwtToken createAndSaveToken(Long user_id, String nickname){
-        JwtToken createToken = jwtProvider.createJwtToken(user_id, nickname); //토큰 생성
+    public JwtToken createAndSaveToken(Long user_id, String nickname, String role){
+        JwtToken createToken = jwtProvider.createJwtToken(user_id, nickname, role); //토큰 생성
 
         //리프레시 토큰 가져오기
         Optional<RefreshToken> findRefreshToken = refreshTokenService.findRefreshToken(user_id);
@@ -46,7 +46,7 @@ public class JwtService {
         User findUser = userService.findById(findId);
 
         //엑세스 토큰 재생성
-        String accessToken = jwtProvider.createAccessToken(findId, findUser.getNickname());
+        String accessToken = jwtProvider.createAccessToken(findId, findUser.getNickname(), findUser.getRoles());
 
         return new JwtToken(accessToken, refreshToken);
     }

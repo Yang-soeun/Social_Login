@@ -98,6 +98,7 @@ public class KakaoService {
         if(user == null){
             user = User.builder()
                     .password(null)
+                    .roles("USER")
                     .nickname(profile.getKakao_account().getProfile().getNickname())
                     .profileImg(profile.getKakao_account().getProfile().getProfile_image_url())
                     .email(profile.getKakao_account().getEmail())
