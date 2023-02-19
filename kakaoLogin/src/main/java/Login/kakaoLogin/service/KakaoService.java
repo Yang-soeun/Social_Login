@@ -25,9 +25,9 @@ public class KakaoService {
     //엑세스 토큰을 받는 함수
     public KakaoToken getAccessToken(String code){
         String reqURL = "https://kauth.kakao.com/oauth/token";
-        String client_id = "8b8cede7921920490681a4cfd0c75f2a";
+        String client_id = "a";
         String redirect_uri = "http://localhost:8080/login";
-        String client_secret = "YhbCEZ2ulDUKkCStKjtzCXjcKlIQvXpT";
+        String client_secret = "";
 
         //Request Parameter
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
