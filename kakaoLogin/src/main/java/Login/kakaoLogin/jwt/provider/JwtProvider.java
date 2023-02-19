@@ -53,7 +53,7 @@ public class JwtProvider implements AuthentocationTokenProvider{
                 .withSubject(String.valueOf(user_id))
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
                 .withClaim("user_id", user_id)
-                .withClaim("nickName", nickname)
+                .withClaim("nickname", nickname)
                 .withClaim("role", role)
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
     }

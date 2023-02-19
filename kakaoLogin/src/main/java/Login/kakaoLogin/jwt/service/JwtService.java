@@ -33,7 +33,6 @@ public class JwtService {
         }else{//리프레시 토큰이 있는 경우: 기존 이용자가 업데이트 하는 경우 사용
             refreshTokenService.updateRefreshToken(user_id, createToken.getRefreshToken());
         }
-
         return createToken;
     }
 

@@ -11,7 +11,6 @@ import Login.kakaoLogin.token.KakaoToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -46,6 +45,24 @@ public class RestApiController {
 
         return "회원가입 완료";
     }
+
+    /**
+     * 권한 테스트
+     */
+    //USER, MANAGER 권한 접근 가능
+    @GetMapping("/test/user")
+    @ResponseBody
+    public String user(){
+        return "user";
+    }
+
+    //MANAGER 권한만 접근 가능
+    @GetMapping("/test/manager")
+    @ResponseBody
+    public String manager(){
+        return "manager";
+    }
+
     /**
      * 카카오 로그인 test
      */
