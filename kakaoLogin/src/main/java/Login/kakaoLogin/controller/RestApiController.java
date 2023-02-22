@@ -66,7 +66,7 @@ public class RestApiController {
     /**
      * 카카오 로그인 test
      */
-    @GetMapping("/login")
+    @GetMapping("/login/kakao")
     public Map<String, String> kakaoLogin(@RequestParam("code") String code){
         //엑세스 토큰 받기
         KakaoToken kakaoToken = kakaoService.getAccessToken(code);

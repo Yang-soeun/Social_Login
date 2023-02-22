@@ -9,7 +9,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,11 +25,19 @@ public class SecurityConfig {
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer(){
+        return web -> web.ignoring()
+                .antMatchers("/join", "joinForm")//일반 로그인
+                .antMatchers("/login/kakao");//카카오 로그읜
+    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-        //JWT는 기본적으로 session을 사용하지 않기때문에 STATELESS 무상태 유지.
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        return http
+                .csrf().disable()
+                  //JWT는 기본적으로 session을 사용하지 않기때문에 STATELESS 무상태 유지.
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 //formLogin 방식 사용안함, json 방식으로 전달
                 .formLogin().disable()
@@ -36,13 +46,10 @@ public class SecurityConfig {
                 .apply(new MyCustomDsl())
                 .and()
                 .authorizeRequests()
-                .antMatchers("/test/user/**")
-                .access("hasRole('USER') or hasRole('MANAGER')")//매니저 권한만 접근 가능
-                .antMatchers("/test/manager/**")
-                .access("hasRole('MANAGER')")//매니저 권한만 접근 가능
-                .anyRequest().permitAll();
-
-        return http.build();
+                .antMatchers("/test/user").hasAuthority("USER")
+                .antMatchers("/test/manager").hasAuthority("MANAGER")
+                .and()
+                .build();
     }
 
     public class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl, HttpSecurity>{

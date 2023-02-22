@@ -94,6 +94,6 @@ public class JwtAuthenticatinFilter extends UsernamePasswordAuthenticationFilter
         JwtToken jwtToken = jwtService.createAndSaveToken(principalDetails.getUser().getUser_id(),
                 principalDetails.getUser().getNickname(), principalDetails.getUser().getRoles());
 
-        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken.getAccessToken());//사용자한테 응답
+        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken.getRefreshToken());//사용자한테 응답
     }
 }
