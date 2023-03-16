@@ -17,8 +17,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @Slf4j
 public class SecurityConfig{
 
-    @Autowired
-    private PrincipalOauth2UserService principalOauth2UserService;
+//    @Autowired
+//    private PrincipalOauth2UserService principalOauth2UserService;
 
     @Bean
     PasswordEncoder passwordEncoder(){
@@ -38,12 +38,10 @@ public class SecurityConfig{
         http.authorizeRequests()
                 .antMatchers("/sample/all").permitAll()
                 .antMatchers("/sample/member").hasRole("USER");
-        http.formLogin();
+        http.formLogin().disable();
         http.csrf().disable();
         http.logout();
-        http.oauth2Login()//구글 oauth 인증 추가
-                .userInfoEndpoint()
-                .userService(principalOauth2UserService);
+        http.oauth2Login();//구글 oauth 인증 추가
         return http.build();
     }//end configure http
 }//end class

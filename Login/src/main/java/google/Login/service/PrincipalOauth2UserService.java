@@ -1,7 +1,8 @@
 package google.Login.service;
 
 import google.Login.Repository.MemberRepository;
-import google.Login.Repository.MemberRepositoryImpl;
+import google.Login.domain.Role_set;
+import google.Login.domain.UserRole;
 import google.Login.domain.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,24 +21,44 @@ import java.sql.SQLException;
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
     @Autowired private MemberRepository memberRepository; //db 저장을 위해
+
     @Autowired private PasswordEncoder passwordEncoder;// 패스워드 암호화
 
+    public static  String provider;
+    public static String providerId;
+
+
     //알아낸 email로 데이터베이스에 추가하는 작업
-//    private User saveSocialMember(String email) throws SQLException{
-//        log.info("saveSocialMember 시작");
-//
-//        //기존에 동일한 이메일로 가입한 회원인지 확인
-//        User result = memberRepository.findByEmail(email);
-//
-//        //기존 회원이면 정보 반환
-//        if(!(result == null)){
-//            log.info("기존 회원");
-//            return result;
-//        }
-//
-//        //가입한적이 없다면
-//
-//    }
+    private User saveSocialMember(String email) throws SQLException{
+        log.info("saveSocialMember 시작");
+
+        //기존에 동일한 이메일로 가입한 회원인지 확인
+        User result = memberRepository.findByEmail(email);
+
+        //기존 회원이면 정보 반환
+        if(!(result == null)){
+            log.info("기존 회원");
+            return result;
+        }
+
+        //가입한적이 없다면
+        //user 정보 저장
+        User user = new User();
+        user.setEmail(email);
+        user.setUsername(provider + "_" + providerId);
+        user.setPassword(passwordEncoder.encode("security"));
+        user.setProvider(provider);
+        user.setProviderId(providerId);
+        memberRepository.save(user);//db에 저장
+
+        //role 정보 저장
+        UserRole userRole = new UserRole();
+        userRole.setEmail(email);
+        userRole.setRole_set(Role_set.USER);
+        memberRepository.saveRole(userRole);
+
+        return result;
+    }
 
     //구글로 부터 받은 userRequest 데이터에 대한 후처리 되는 함수
 
@@ -63,11 +84,31 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
         //사용자 정보 가져오기 구글에서 허용한 API 범위
         OAuth2User oAuth2User = super.loadUser(userRequest);
+
         log.info("=====================================");
         oAuth2User.getAttributes().forEach((k, v) ->{
             log.info(k + ":" + v);
         });
 
-        return super.loadUser(userRequest);
+        provider = userRequest.getClientRegistration().getRegistrationId();
+        providerId = oAuth2User.getAttribute("sub");
+
+        //신규 회원 테이블에 저장
+        String email = null;
+
+        if(clientName .equals("Google"))
+            email = oAuth2User.getAttribute("email");
+
+        log.info("구글 인증 확인");
+        log.info("email : " + email);
+
+        try{
+            User user = saveSocialMember(email);
+        } catch (SQLException e){
+            log.info("saveSocialMember error");
+            log.info(e.toString());
+        }
+
+        return oAuth2User;
     }
 }
