@@ -1,11 +1,9 @@
 package google.Login.Repository;
 
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import google.Login.domain.QUser;
 import google.Login.domain.User;
-import google.Login.domain.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -39,11 +37,11 @@ public class MemberRepositoryImpl implements MemberRepository{
         em.persist(user);
     }
 
-    @Override
-    @Transactional
-    public void saveRole(UserRole userRole) {
-        em.persist(userRole);
-    }
+//    @Override
+//    @Transactional
+//    public void saveRole(UserRole userRole) {
+//        em.persist(userRole);
+//    }
 
     private BooleanExpression sameEmail(String email){
         return (email == null) ? null :QUser.user.email.eq(email);

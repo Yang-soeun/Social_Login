@@ -16,7 +16,5 @@ public class User {
     private String email;
     private String provider;//google
     private String providerId;
-
-    @OneToOne(mappedBy = "user")
-    private UserRole userRole;
+    private String role;
 }

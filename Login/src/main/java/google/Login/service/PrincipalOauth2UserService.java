@@ -2,10 +2,12 @@ package google.Login.service;
 
 import google.Login.Repository.MemberRepository;
 import google.Login.domain.Role_set;
-import google.Login.domain.UserRole;
 import google.Login.domain.User;
+import google.Login.security.dto.UserAuthDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -14,6 +16,14 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * PrincipalOauth2UserService의 loadUser()의 경우 일반적인 로그인과 다르게 OAuth2User 타입 반환
+ * -> 일반적으로 UserDetails, TestController는 UserAuthDTO 타입 반환 화면에서 정상적으로 회원 정보를 처리하기 위해서는
+ * OAuth2User -> UserAuthDTO 타입으로 변환 필요
+ */
 
 
 @Service
@@ -49,15 +59,12 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         user.setPassword(passwordEncoder.encode("security"));
         user.setProvider(provider);
         user.setProviderId(providerId);
+        user.setRole(Role_set.USER.toString());
         memberRepository.save(user);//db에 저장
 
-        //role 정보 저장
-        UserRole userRole = new UserRole();
-        userRole.setEmail(email);
-        userRole.setRole_set(Role_set.USER);
-        memberRepository.saveRole(userRole);
+        result = memberRepository.findByEmail(email);
 
-        return result;
+        return result;//추가된 정보 반환
     }
 
     //구글로 부터 받은 userRequest 데이터에 대한 후처리 되는 함수
@@ -85,7 +92,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         //사용자 정보 가져오기 구글에서 허용한 API 범위
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        log.info("=====================================");
+        log.info("==========oAuth2User==============");
         oAuth2User.getAttributes().forEach((k, v) ->{
             log.info(k + ":" + v);
         });
@@ -96,7 +103,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         //신규 회원 테이블에 저장
         String email = null;
 
-        if(clientName .equals("Google"))
+        if(clientName .equals("Google"))//구글 인증 확인
             email = oAuth2User.getAttribute("email");
 
         log.info("구글 인증 확인");
@@ -104,11 +111,29 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
         try{
             User user = saveSocialMember(email);
+            log.info("---saveSocialMember 완료---");
+
+            //UserAuthDTO 생서이 필요한 aithrities
+            List<GrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(
+                    new SimpleGrantedAuthority("ROLE" + user.getRole()));
+
+            //OAuth2User를 UserAuthDTO로 변환
+            UserAuthDTO userAuthDTO =
+                    new UserAuthDTO(user.getEmail(),
+                            user.getPassword(),
+                            authorities,
+                            oAuth2User.getAttributes());
+            userAuthDTO.setName(user.getUsername());
+            userAuthDTO.setPasswrod(user.getPassword());
+
+            return userAuthDTO;
+
         } catch (SQLException e){
             log.info("saveSocialMember error");
             log.info(e.toString());
-        }
 
-        return oAuth2User;
+            return null;
+        }
     }
 }

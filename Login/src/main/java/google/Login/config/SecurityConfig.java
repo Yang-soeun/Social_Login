@@ -1,5 +1,6 @@
 package google.Login.config;
 
+import google.Login.security.handler.UserLoginSuccessHandler;
 import google.Login.service.PrincipalOauth2UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,12 @@ public class SecurityConfig{
 //    @Autowired
 //    private PrincipalOauth2UserService principalOauth2UserService;
 
+    //UserLoginSuccessHandler bean으로 등록
+//    @Bean
+//    public UserLoginSuccessHandler successHandler(){
+//        return new UserLoginSuccessHandler();
+//    }
+
     @Bean
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -36,12 +43,16 @@ public class SecurityConfig{
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.authorizeRequests()
-                .antMatchers("/sample/all").permitAll()
-                .antMatchers("/sample/member").hasRole("USER");
-        http.formLogin().disable();
+                .antMatchers("/test/all").permitAll()
+                .antMatchers("/test/member").hasRole("USER");
+        //인가 인증 문제시 로그인 화면
+        http.formLogin();
         http.csrf().disable();
         http.logout();
+        //구글 oauth 인증 추가
+        //UserLoginSuccessHandler 등록
         http.oauth2Login();//구글 oauth 인증 추가
+
         return http.build();
     }//end configure http
 }//end class
