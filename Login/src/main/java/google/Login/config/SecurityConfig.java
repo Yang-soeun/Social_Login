@@ -36,22 +36,29 @@ public class SecurityConfig{
     public RoleHierarchyImpl roleHierarchyImpl(){
         log.info("실행");
         RoleHierarchyImpl roleHierarchyImpl = new RoleHierarchyImpl();
-        roleHierarchyImpl.setHierarchy("ROLE_ADMIN > ROLE_MANAGER > ROLE_USER");
+        roleHierarchyImpl.setHierarchy("ADMIN > MANAGER > USER");
         return roleHierarchyImpl;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        http.authorizeRequests()
-                .antMatchers("/test/all").permitAll()
-                .antMatchers("/test/member").hasRole("USER");
-        //인가 인증 문제시 로그인 화면
-        http.formLogin();
-        http.csrf().disable();
-        http.logout();
-        //구글 oauth 인증 추가
-        //UserLoginSuccessHandler 등록
-        http.oauth2Login();//구글 oauth 인증 추가
+        http.csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/test/all").authenticated()
+                .antMatchers("/test/member").hasAnyAuthority("USER")
+                .anyRequest().permitAll()
+
+                .and()
+                //인가 인증 문제시 로그인 화면
+                .formLogin()
+                .loginPage("/loginForm")//사용자 정의 로그인 페이지, 미인증 사용자가 접근하면 이 페이지로 돌아옴
+                .loginProcessingUrl("/login")//login 주소가 호출이 되면 시큐리티가 낚아채서 대신 로그인을 진행해줌 -> controller 안만들어도 됨
+                .defaultSuccessUrl("/")//로그인 성공 후 이동 페이지
+                .and()
+                //구글 oauth 인증 추가
+                //UserLoginSuccessHandler 등록
+                .oauth2Login()//구글 oauth 인증 추가
+                .loginPage("/loginForm");
 
         return http.build();
     }//end configure http

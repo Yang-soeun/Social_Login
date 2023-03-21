@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,16 +54,18 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
         //가입한적이 없다면
         //user 정보 저장
-        User user = new User();
-        user.setEmail(email);
-        user.setUsername(provider + "_" + providerId);
-        user.setPassword(passwordEncoder.encode("security"));
-        user.setProvider(provider);
-        user.setProviderId(providerId);
-        user.setRole(Role_set.USER.toString());
-        memberRepository.save(user);//db에 저장
+        LocalDateTime createTime = LocalDateTime.now();
+        result = User.builder()
+                .username(provider + "_" + providerId)
+                .password(passwordEncoder.encode("security"))
+                .email(email)
+                .provider(provider)
+                .providerId(providerId)
+                .role(Role_set.USER.toString())
+                .createDate(createTime)
+                .build();
 
-        result = memberRepository.findByEmail(email);
+        memberRepository.save(result);//db에 저장
 
         return result;//추가된 정보 반환
     }
@@ -116,7 +119,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
             //UserAuthDTO 생서이 필요한 aithrities
             List<GrantedAuthority> authorities = new ArrayList<>();
             authorities.add(
-                    new SimpleGrantedAuthority("ROLE" + user.getRole()));
+                    new SimpleGrantedAuthority(user.getRole()));
 
             //OAuth2User를 UserAuthDTO로 변환
             UserAuthDTO userAuthDTO =

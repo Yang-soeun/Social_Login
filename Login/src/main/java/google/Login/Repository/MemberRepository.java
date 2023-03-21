@@ -9,5 +9,5 @@ public interface MemberRepository{
 
     void save(User user);
 
-//    void saveRole(UserRole userRole);
+    User findByUsername(String username);
 }
